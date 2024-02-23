@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/screens/home.dart';
+import 'package:todo_app/screens/profile.dart';
+import 'package:todo_app/screens/settings.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +14,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Todo App 1",
-      home: Home()
+      home: Home(),
+      routes: {
+        '': (context) => Home(),
+        '/profile': (context) => Profile(),
+        '/settings': (context) => Settings()
+      },
     );
   }
 }

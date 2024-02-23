@@ -15,7 +15,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   AppBar build(BuildContext context) {
     return AppBar(
       backgroundColor: tdBGColor,
-      leading: Icon(Icons.menu, color: tdBlack, size: 30,),
+      // automaticallyImplyLeading: false, //disable back button
       actions: [
         Container(
           height: 40,
