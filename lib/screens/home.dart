@@ -7,7 +7,10 @@ import 'package:flutter/widgets.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/models/todo.dart';
 import 'package:todo_app/widgets/blur_background.dart';
+import 'package:todo_app/widgets/search_box.dart';
 import 'package:todo_app/widgets/todo_item.dart';
+
+import '../widgets/app_bar.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -25,7 +28,10 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: tdBGColor,
-      appBar: _buildAppBar(),
+      appBar: BaseAppBar(
+        appBar: AppBar(),
+        //...any widgets customize for the appbar
+      ),
       body: GestureDetector(
         onTap: () {
           setState(() {
@@ -38,7 +44,7 @@ class _HomeState extends State<Home> {
               padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               child: Column(
                 children: [
-                  searchBox(),
+                  SearchBox(),
                   Expanded(
                       child: ListView(
                         children: [
@@ -137,46 +143,6 @@ class _HomeState extends State<Home> {
           ],
         ),
       )
-    );
-  }
-
-  Widget searchBox() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(30)
-      ),
-      child: TextField(
-        decoration: InputDecoration(
-            contentPadding: EdgeInsets.all(0),
-            prefixIcon: Icon(Icons.search, color: tdBlack, size: 20,),
-            prefixIconConstraints: BoxConstraints(
-                maxHeight: 20,
-                minWidth: 25
-            ),
-            border: InputBorder.none,
-            hintText: "Search",
-            hintStyle: TextStyle(color: Colors.grey)
-        ),
-      ),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: tdBGColor,
-      leading: Icon(Icons.menu, color: tdBlack, size: 30,),
-      actions: [
-        Container(
-          height: 40,
-          width: 40,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.asset('assets/images/avt.jpeg'),
-          ),
-        )
-      ],
     );
   }
 }
