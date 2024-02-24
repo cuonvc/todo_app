@@ -24,7 +24,15 @@ class _HomeState extends State<Home> {
   final todoList = Todo.todoList();
   final _textFieldController = TextEditingController();
 
+  List<Todo> foundTodo = [];
   bool clickedAddItem = false;
+
+
+  @override
+  void initState() {
+    foundTodo = todoList;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +53,7 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 child: Column(
                   children: [
-                    SearchBox(),
+                    SearchBox(searchByKeyword: _searchByKeyword),
                     Expanded(
                         child: ListView(
                           children: [
@@ -60,7 +68,7 @@ class _HomeState extends State<Home> {
                               ),
                             ),
 
-                            for(Todo todo in todoList)
+                            for(Todo todo in foundTodo.reversed)
                               TodoItem(
                                 todo: todo,
                                 onToDoChanged: _handleTodoChange,
@@ -141,6 +149,7 @@ class _HomeState extends State<Home> {
                                 });
                                 if (_textFieldController.text.isNotEmpty) {
                                   _handleTodoAdd(_textFieldController.text);
+                                  clickedAddItem = false;  //dismiss blur layer
                                 }
                               },
                             )
@@ -177,5 +186,21 @@ class _HomeState extends State<Home> {
       );
     });
     _textFieldController.clear();
+  }
+
+  void _searchByKeyword(String keyword) {
+    List<Todo> resultList = [];
+    if (keyword.isEmpty) {
+      resultList = todoList;
+    } else {
+      resultList = todoList
+          .where((element) => element.description!.toLowerCase()
+          .contains(keyword.toLowerCase()))
+          .toList();
+    }
+
+    setState(() {
+      foundTodo = resultList;
+    });
   }
 }
