@@ -22,6 +22,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final todoList = Todo.todoList();
+  final _textFieldController = TextEditingController();
 
   bool clickedAddItem = false;
 
@@ -104,6 +105,7 @@ class _HomeState extends State<Home> {
                                   borderRadius: BorderRadius.circular(10)
                               ),
                               child: TextField(
+                                controller: _textFieldController,
                                 decoration: InputDecoration(
                                     hintText: "Add a new item",
                                     border: InputBorder.none
@@ -137,6 +139,9 @@ class _HomeState extends State<Home> {
                                 setState(() {
                                   clickedAddItem = true;
                                 });
+                                if (_textFieldController.text.isNotEmpty) {
+                                  _handleTodoAdd(_textFieldController.text);
+                                }
                               },
                             )
                         )
@@ -160,5 +165,17 @@ class _HomeState extends State<Home> {
     setState(() {
       todoList.removeWhere((element) => element.id == id);
     });
+  }
+
+  void _handleTodoAdd(String description) {
+    setState(() {
+      todoList.add(
+          Todo(
+              id: DateTime.now().microsecondsSinceEpoch.toString(),
+              description: description
+          )
+      );
+    });
+    _textFieldController.clear();
   }
 }
