@@ -60,7 +60,11 @@ class _HomeState extends State<Home> {
                             ),
 
                             for(Todo todo in todoList)
-                              TodoItem(todo: todo)
+                              TodoItem(
+                                todo: todo,
+                                onToDoChanged: _handleTodoChange,
+                                onDeleteItem: _handleTodoDelete,
+                              )
                           ],
                         )
                     )
@@ -144,5 +148,17 @@ class _HomeState extends State<Home> {
           ),
         )
     );
+  }
+
+  void _handleTodoChange(Todo todo) {
+    setState(() {
+      todo.isDone = !todo.isDone;
+    });
+  }
+
+  void _handleTodoDelete(String id) {
+    setState(() {
+      todoList.removeWhere((element) => element.id == id);
+    });
   }
 }
