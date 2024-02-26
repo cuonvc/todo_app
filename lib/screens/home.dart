@@ -4,6 +4,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/models/todo.dart';
 import 'package:todo_app/widgets/blur_background.dart';
@@ -25,7 +26,7 @@ class _HomeState extends State<Home> {
   final _textFieldController = TextEditingController();
 
   List<Todo> foundTodo = [];
-  bool clickedAddItem = false;
+  bool typeTextField = false;
 
 
   @override
@@ -41,12 +42,14 @@ class _HomeState extends State<Home> {
         appBar: BaseAppBar(appBar: AppBar()),
         drawer: BaseDrawer(),
 
-        body: GestureDetector(
-          onTap: () {
-            setState(() {
-              clickedAddItem = false;
-            });
-          },
+        body: Container(
+          // onTap: () {
+          //   setState(() {
+          //     typeTextField = false;
+          //     _textFieldController.text = "";
+          //     Slidable.of(context)?.close();
+          //   });
+          // },
           child: Stack(
             children: [
               Container(
@@ -73,6 +76,7 @@ class _HomeState extends State<Home> {
                                 todo: todo,
                                 onToDoChanged: _handleTodoChange,
                                 onDeleteItem: _handleTodoDelete,
+                                onTriggerToUpdate: _triggerTodoUpdate,
                               )
                           ],
                         )
@@ -83,7 +87,7 @@ class _HomeState extends State<Home> {
 
               //blur background
               Visibility(
-                visible: clickedAddItem ? true : false,
+                visible: typeTextField ? true : false,
                 child: BlurBackground()
               ),
 
@@ -96,10 +100,10 @@ class _HomeState extends State<Home> {
                       children: [
                         Expanded(
                           child: Visibility(
-                            visible: clickedAddItem ? true : false,
+                            visible: typeTextField ? true : false,
                             child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 15),
-                              margin: EdgeInsets.only(right: 20),
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              margin: const EdgeInsets.only(right: 20),
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   boxShadow: const [
@@ -114,9 +118,10 @@ class _HomeState extends State<Home> {
                               ),
                               child: TextField(
                                 controller: _textFieldController,
+                                // autofocus: true,
                                 decoration: InputDecoration(
-                                    hintText: "Add a new item",
-                                    border: InputBorder.none
+                                  hintText: "Thêm một ghi chú mới...",
+                                  border: InputBorder.none,
                                 ),
                               ),
                             ),
@@ -136,22 +141,45 @@ class _HomeState extends State<Home> {
                                 ],
                                 borderRadius: BorderRadius.circular(10)
                             ),
-                            child: IconButton(
-                              icon: Padding(
-                                padding: EdgeInsets.only(top: 0),
-                                child: clickedAddItem == true ? Icon(Icons.send) : Icon(Icons.add),
-                              ),
-                              color: tdBlue,
-                              iconSize: 30,
-                              onPressed: () {
-                                setState(() {
-                                  clickedAddItem = true;
-                                });
-                                if (_textFieldController.text.isNotEmpty) {
-                                  _handleTodoAdd(_textFieldController.text);
-                                  clickedAddItem = false;  //dismiss blur layer
-                                }
-                              },
+                            child: Row(
+                              children: [
+                                Visibility(
+                                  visible: typeTextField ? true : false,
+                                    child: IconButton(
+                                      icon: Padding(
+                                        padding: EdgeInsets.only(top: 0),
+                                        child: Icon(Icons.keyboard_arrow_down_outlined),
+                                      ),
+                                      color: tdRed,
+                                      iconSize: 30,
+                                      onPressed: () {
+                                        setState(() {
+                                          typeTextField = false;
+                                          _textFieldController.text = "";
+                                        });
+                                      },
+                                    )
+                                ),
+
+                                IconButton(
+                                  icon: Padding(
+                                    padding: EdgeInsets.only(top: 0),
+                                    child: typeTextField == true ? Icon(Icons.send) : Icon(Icons.add),
+                                  ),
+                                  color: tdBlue,
+                                  iconSize: 30,
+                                  onPressed: () {
+                                    setState(() {
+                                      typeTextField = true;
+                                    });
+                                    if (_textFieldController.text.isNotEmpty) {
+                                      _handleTodoAdd(_textFieldController.text);
+                                      typeTextField = false;  //dismiss blur layer
+                                    }
+                                  },
+                                )
+                              ],
+
                             )
                         )
                       ],
@@ -167,6 +195,13 @@ class _HomeState extends State<Home> {
   void _handleTodoChange(Todo todo) {
     setState(() {
       todo.isDone = !todo.isDone;
+    });
+  }
+
+  void _triggerTodoUpdate(Todo todo) {
+    setState(() {
+      typeTextField = true;
+      _textFieldController.text = todo.description.toString();
     });
   }
 
