@@ -66,7 +66,7 @@ class TodoItem extends StatelessWidget {
         },
       ),
       title: Text(
-        todo.description!, //flexible
+        todo.title, //flexible
         style: TextStyle(
             fontSize: 16,
             color: tdBlack,

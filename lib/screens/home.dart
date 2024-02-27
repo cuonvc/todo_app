@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/animation.dart';
@@ -11,6 +12,7 @@ import 'package:todo_app/widgets/blur_background.dart';
 import 'package:todo_app/widgets/drawer.dart';
 import 'package:todo_app/widgets/search_box.dart';
 import 'package:todo_app/widgets/todo_item.dart';
+import 'package:http/http.dart' as http;
 
 import '../widgets/app_bar.dart';
 
@@ -22,7 +24,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final todoList = Todo.todoList();
+  List<Todo> todoList = [];
   final _textFieldController = TextEditingController();
 
   List<Todo> foundTodo = [];
@@ -31,6 +33,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    fetchGetTodo();
     foundTodo = todoList;
     super.initState();
   }
@@ -211,12 +214,13 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _handleTodoAdd(String description) {
+  void _handleTodoAdd(String title) {
     setState(() {
       todoList.add(
           Todo(
-              id: DateTime.now().microsecondsSinceEpoch.toString(),
-              description: description
+              id: null,
+              title: title,
+              description: null
           )
       );
     });
@@ -237,5 +241,22 @@ class _HomeState extends State<Home> {
     setState(() {
       foundTodo = resultList;
     });
+  }
+
+  Future<void> fetchGetTodo() async {
+    final uri = Uri.parse("https://viper-chief-secondly.ngrok-free.app/api/v1/todo");
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      List<dynamic> data = responseData['data'];
+      List<Todo> todos = data.map((e) => Todo.fromJson(e)).toList();
+
+      setState(() {
+        foundTodo = todos;
+      });
+    } else {
+      throw Exception("Failed to load the todo");
+    }
   }
 }
