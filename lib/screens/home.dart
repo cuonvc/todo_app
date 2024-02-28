@@ -176,7 +176,7 @@ class _HomeState extends State<Home> {
                                       typeTextField = true;
                                     });
                                     if (_textFieldController.text.isNotEmpty) {
-                                      _handleTodoAdd(_textFieldController.text);
+                                      _handleTodoAdd(Todo(id: null, title: _textFieldController.text, description: null, updatedAt: null));
                                       typeTextField = false;  //dismiss blur layer
                                     }
                                   },
@@ -208,23 +208,39 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _handleTodoDelete(String id) {
-    setState(() {
-      todoList.removeWhere((element) => element.id == id);
-    });
+  Future<void> _handleTodoDelete(String id) async {
+    final uri = Uri.parse("https://viper-chief-secondly.ngrok-free.app/api/v1/todo/$id");
+    final response = await http.delete(uri);
+    if (response.statusCode == 200) {
+      setState(() {
+        foundTodo.removeWhere((element) => element.id == id);
+      });
+    } else {
+      throw Exception("Failed to delete todo item");
+    }
   }
 
-  void _handleTodoAdd(String title) {
-    setState(() {
-      todoList.add(
-          Todo(
-              id: null,
-              title: title,
-              description: null
-          )
-      );
-    });
-    _textFieldController.clear();
+  Future<void> _handleTodoAdd(Todo todo) async {
+    final uri = Uri.parse("https://viper-chief-secondly.ngrok-free.app/api/v1/todo");
+    Map<String, dynamic> request = {
+      'title': todo.title,
+    };
+
+    final response = await http.post(
+        uri,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(request)
+    );
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      Map<String, dynamic> data = responseBody['data'];
+      setState(() {
+        foundTodo.add(Todo.fromJson(data));
+      });
+      _textFieldController.clear();
+    } else {
+      throw Exception("Failed to create the todo");
+    }
   }
 
   void _searchByKeyword(String keyword) {
@@ -248,8 +264,8 @@ class _HomeState extends State<Home> {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = jsonDecode(response.body);
-      List<dynamic> data = responseData['data'];
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      List<dynamic> data = responseBody['data'];
       List<Todo> todos = data.map((e) => Todo.fromJson(e)).toList();
 
       setState(() {

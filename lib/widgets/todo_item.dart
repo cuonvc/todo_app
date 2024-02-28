@@ -35,6 +35,12 @@ class TodoItem extends StatelessWidget {
                 ),
                 SlidableAction(
                   onPressed: (BuildContext context) {
+                    showDialog(context: context, builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Delete"),
+                        content: Text("Do you want delete this item?"),
+                      );
+                    });
                     onDeleteItem(todo.id);
                   },
                   icon: Icons.delete,
@@ -65,14 +71,27 @@ class TodoItem extends StatelessWidget {
           onToDoChanged(todo);
         },
       ),
-      title: Text(
-        todo.title, //flexible
-        style: TextStyle(
-            fontSize: 16,
-            color: tdBlack,
-            fontWeight: FontWeight.w400,
-            decoration: todo.isDone? TextDecoration.lineThrough : null  //flexible
-        ),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            todo.title, //flexible
+            style: TextStyle(
+                fontSize: 16,
+                color: tdBlack,
+                fontWeight: FontWeight.w500,
+                decoration: todo.isDone? TextDecoration.lineThrough : null  //flexible
+            ),
+          ),
+          Text(
+            todo.updatedAt!.substring(0, 10).split("-").reversed.join("-"),
+            style: TextStyle(
+                fontSize: 13,
+                color: tdGrey,
+                fontWeight: FontWeight.w300,
+            ),
+          )
+        ]
       ),
     );
   }
