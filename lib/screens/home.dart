@@ -195,10 +195,16 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _handleTodoChange(Todo todo) {
-    setState(() {
-      todo.isDone = !todo.isDone;
-    });
+  Future<void> _handleTodoChange(Todo todo) async {
+    final uri = Uri.parse("https://viper-chief-secondly.ngrok-free.app/api/v1/todo/action/${todo.id}?isDone=${!todo.isDone}");
+    final response = await http.put(uri);
+    if (response.statusCode == 200) {
+      setState(() {
+        todo.isDone = !todo.isDone;
+      });
+    } else {
+      throw Exception("Failed to done todo item");
+    }
   }
 
   void _triggerTodoUpdate(Todo todo) {
