@@ -3,6 +3,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/models/todo.dart';
 
+import 'confirm_alert.dart';
+
 class TodoItem extends StatelessWidget {
 
   final Todo todo;
@@ -34,14 +36,11 @@ class TodoItem extends StatelessWidget {
                   foregroundColor: tdBlue,
                 ),
                 SlidableAction(
-                  onPressed: (BuildContext context) {
-                    showDialog(context: context, builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Delete"),
-                        content: Text("Do you want delete this item?"),
-                      );
-                    });
-                    onDeleteItem(todo.id);
+                  onPressed: (BuildContext context) async {
+                    bool? toContinue = await DeleteConfirmationDialog.show(context, "Xóa ghi chú", "Bạn có chắc chắn muốn xóa ghi chú này?");
+                    if (toContinue == true) {
+                      onDeleteItem(todo.id);
+                    }
                   },
                   icon: Icons.delete,
                   foregroundColor: tdRed,
@@ -67,8 +66,16 @@ class TodoItem extends StatelessWidget {
       leading: IconButton(
         icon: Icon(todo.isDone? Icons.check_box : Icons.check_box_outline_blank), //flexible
         color: tdBlue,
-        onPressed: () {
-          onToDoChanged(todo);
+        onPressed: () async {
+          String action = todo.isDone ? "tiếp tục" : "hoàn thành";
+          bool? toContinue = await DeleteConfirmationDialog.show(
+              context,
+              "${action[0].toUpperCase()}${action.substring(1)} task",
+              "Xác nhận $action task này?"
+          );
+          if (toContinue == true) {
+            onToDoChanged(todo);
+          }
         },
       ),
       title: Row(
@@ -96,3 +103,4 @@ class TodoItem extends StatelessWidget {
     );
   }
 }
+
