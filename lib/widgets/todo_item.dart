@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/models/todo.dart';
+import 'package:todo_app/widgets/todo_editor.dart';
 
 import 'confirm_alert.dart';
 
@@ -55,7 +56,7 @@ class TodoItem extends StatelessWidget {
   ListTile itemBuilder(BuildContext context) {
     return ListTile(
       onTap: () {
-        print("Clicked on Todo Item.");
+
       },
       shape: const RoundedRectangleBorder(
         // borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20))
@@ -100,6 +101,13 @@ class TodoItem extends StatelessWidget {
           )
         ]
       ),
+    );
+  }
+
+  Widget todoEditor(BuildContext context) {
+    return Container(
+      child: Text("Testset"),
+      color: Colors.red,
     );
   }
 }
