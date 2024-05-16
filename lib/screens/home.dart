@@ -197,7 +197,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _handleTodoChange(Todo todo) async {
-    final uri = Uri.parse("$publicUri/api/v1/todo/action/${todo.id}?isDone=${!todo.isDone}");
+    final uri = Uri.parse("$webUri/api/v1/todo/action/${todo.id}?isDone=${!todo.isDone}");
     final response = await http.put(uri);
     if (response.statusCode == 200) {
       setState(() {
@@ -216,7 +216,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> handleTodoUpdate(Todo todo) async {
-    final uri = Uri.parse("$publicUri/api/v1/todo/${todo.id}");
+    final uri = Uri.parse("$webUri/api/v1/todo/${todo.id}");
     Map<String, dynamic> request = {
       'title': todo.title
     };
@@ -239,7 +239,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _handleTodoDelete(String id) async {
-    final uri = Uri.parse("$publicUri/api/v1/todo/$id");
+    final uri = Uri.parse("$webUri/api/v1/todo/$id");
     final response = await http.delete(uri);
     if (response.statusCode == 200) {
       setState(() {
@@ -251,7 +251,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _handleTodoAdd(Todo todo) async {
-    final uri = Uri.parse("$publicUri/api/v1/todo");
+    final uri = Uri.parse("$webUri/api/v1/todo");
     Map<String, dynamic> request = {
       'title': todo.title,
     };
@@ -290,20 +290,13 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> fetchGetTodo() async {
-    final uri = Uri.parse("$publicUri/api/v1/todo");
+    final uri = Uri.parse("$webUri/api/v1/todo");
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      List<Todo> todos = [];
-      if (kIsWeb) {
-        print("Flutter web is running...");
-      } else {
-        print("Flutter app is running...");
-        final Map<String, dynamic> responseBody = jsonDecode(response.body);
-        List<dynamic> data = responseBody['data'];
-        todos = data.map((e) => Todo.fromJson(e)).toList();
-      }
-
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      List<dynamic> data = responseBody['data'];
+      List<Todo> todos = data.map((e) => Todo.fromJson(e)).toList();
 
       setState(() {
         foundTodo = todos;
