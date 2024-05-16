@@ -27,6 +27,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Todo> todoList = [];
   final _textFieldController = TextEditingController();
+  Todo currentTodo = Todo(id: null, title: '', description: null, updatedAt: null);
 
   List<Todo> foundTodo = [];
   bool typeTextField = false;
@@ -47,13 +48,6 @@ class _HomeState extends State<Home> {
         drawer: BaseDrawer(),
 
         body: Container(
-          // onTap: () {
-          //   setState(() {
-          //     typeTextField = false;
-          //     _textFieldController.text = "";
-          //     Slidable.of(context)?.close();
-          //   });
-          // },
           child: Stack(
             children: [
               Container(
@@ -177,7 +171,12 @@ class _HomeState extends State<Home> {
                                       typeTextField = true;
                                     });
                                     if (_textFieldController.text.isNotEmpty) {
-                                      _handleTodoAdd(Todo(id: null, title: _textFieldController.text, description: null, updatedAt: null));
+                                      if (currentTodo.id != null) {
+                                        currentTodo.title = _textFieldController.text;
+                                        handleTodoUpdate(Todo(id: currentTodo.id, title: _textFieldController.text, description: null, updatedAt: null));
+                                      } else {
+                                        _handleTodoAdd(Todo(id: null, title: _textFieldController.text, description: null, updatedAt: null));
+                                      }
                                       typeTextField = false;  //dismiss blur layer
                                     }
                                   },
@@ -209,9 +208,11 @@ class _HomeState extends State<Home> {
   }
 
   void _triggerTodoUpdate(Todo todo) {
+    print(todo.id);
     setState(() {
       typeTextField = true;
       _textFieldController.text = todo.title.toString();
+      currentTodo = todo;
     });
   }
 

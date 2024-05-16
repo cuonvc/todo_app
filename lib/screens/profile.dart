@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/widgets/app_bar.dart';
-import 'package:todo_app/widgets/drawer.dart';
 
 class Profile extends StatelessWidget {
 
