@@ -34,7 +34,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    fetchGetTodo();
+    fetchGetTodo('');
     foundTodo = todoList;
     super.initState();
   }
@@ -60,7 +60,7 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 child: Column(
                   children: [
-                    SearchBox(searchByKeyword: _searchByKeyword),
+                    SearchBox(searchByKeyword: fetchGetTodo),
                     Expanded(
                         child: ListView(
                           children: [
@@ -273,24 +273,8 @@ class _HomeState extends State<Home> {
     }
   }
 
-  void _searchByKeyword(String keyword) {
-    List<Todo> resultList = [];
-    if (keyword.isEmpty) {
-      resultList = todoList;
-    } else {
-      resultList = todoList
-          .where((element) => element.description!.toLowerCase()
-          .contains(keyword.toLowerCase()))
-          .toList();
-    }
-
-    setState(() {
-      foundTodo = resultList;
-    });
-  }
-
-  Future<void> fetchGetTodo() async {
-    final uri = Uri.parse("$webUri/api/v1/todo");
+  Future<void> fetchGetTodo(String keyword) async {
+    final uri = Uri.parse("$webUri/api/v1/todo?keyword=$keyword");
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
