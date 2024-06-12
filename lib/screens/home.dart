@@ -196,7 +196,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _handleTodoChange(Todo todo) async {
-    final uri = Uri.parse("$webUri/api/v1/todo/action/${todo.id}?isDone=${!todo.isDone}");
+    final uri = Uri.parse("$publicUri/api/v1/todo/action/${todo.id}?isDone=${!todo.isDone}");
     final response = await http.put(uri);
     if (response.statusCode == 200) {
       setState(() {
@@ -217,7 +217,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> handleTodoUpdate(Todo todo) async {
-    final uri = Uri.parse("$webUri/api/v1/todo/${todo.id}");
+    final uri = Uri.parse("$publicUri/api/v1/todo/${todo.id}");
     Map<String, dynamic> request = {
       'title': todo.title
     };
@@ -229,7 +229,7 @@ class _HomeState extends State<Home> {
     );
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> responseBody = jsonDecode(response.body);
+      Map<String, dynamic> responseBody = jsonDecode(utf8.decode(response.bodyBytes));
       setState(() {
         foundTodo.add(Todo.fromJson(responseBody['data']));
       });
@@ -240,7 +240,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _handleTodoDelete(String id) async {
-    final uri = Uri.parse("$webUri/api/v1/todo/$id");
+    final uri = Uri.parse("$publicUri/api/v1/todo/$id");
     final response = await http.delete(uri);
     if (response.statusCode == 200) {
       setState(() {
@@ -252,7 +252,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _handleTodoAdd(Todo todo) async {
-    final uri = Uri.parse("$webUri/api/v1/todo");
+    final uri = Uri.parse("$publicUri/api/v1/todo");
     Map<String, dynamic> request = {
       'title': todo.title,
     };
@@ -263,7 +263,7 @@ class _HomeState extends State<Home> {
         body: json.encode(request)
     );
     if (response.statusCode == 200) {
-      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      final Map<String, dynamic> responseBody = jsonDecode(utf8.decode(response.bodyBytes));
       Map<String, dynamic> data = responseBody['data'];
       setState(() {
         foundTodo.add(Todo.fromJson(data));
@@ -275,11 +275,11 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> fetchGetTodo(String keyword) async {
-    final uri = Uri.parse("$webUri/api/v1/todo?keyword=$keyword");
+    final uri = Uri.parse("$publicUri/api/v1/todo?keyword=$keyword");
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      final Map<String, dynamic> responseBody = jsonDecode(utf8.decode(response.bodyBytes));
       List<dynamic> data = responseBody['data'];
       List<Todo> todos = data.map((e) => Todo.fromJson(e)).toList();
 
